@@ -24,9 +24,9 @@ module.exports = {
     },
     getShowsByGenre: async (req, res) => {
         try {
-            const show = await Show.findAll({ where: { genre: { [Op.like]: `%${req.params.genre}%` } } });
-            if (show.length) {
-                return res.json(show);
+            const shows = await Show.findAll({ where: { genre: { [Op.like]: `%${req.params.genre}%` } } });
+            if (shows.length) {
+                return res.json(shows);
             } else {
                 return res.status(404).json({ error: `Shows with ${req.params.genre} genre not found` });
             }
@@ -38,7 +38,7 @@ module.exports = {
         try {
             const show = await Show.findByPk(req.params.id);
             if (show) {
-                show.status = req.body.status;
+                show.rating = req.body.rating;
                 await show.save();
                 return res.json(show);
             } else {
@@ -52,6 +52,8 @@ module.exports = {
         try {
             const show = await Show.findByPk(req.params.id);
             if (show) {
+                show.status = req.body.status;
+                await show.save();
                 return res.json(show);
             } else {
                 return res.status(404).json({ error: 'Show not found' });
