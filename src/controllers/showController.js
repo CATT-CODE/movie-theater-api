@@ -3,23 +3,76 @@ const { Op } = require("sequelize");
 
 module.exports = {
     getAllShows: async (req, res) => {
-        const shows = await Show.findAll()
-        res.json(shows)
+        try {
+            const shows = await Show.findAll();
+            return res.json(shows);
+        } catch (error) {
+            next(error)
+        }
     },
     getShowById: async (req, res) => {
-        const show = await Show.findByPk(req.params.id);
-        if (show) {
-            res.json(show);
-        } else {
-            res.status(404).json({ error: 'Show not found' });
+        try {
+            const show = await Show.findByPk(req.params.id);
+            if (show) {
+                return res.json(show);
+            } else {
+                return res.status(404).json({ error: 'Show not found' });
+            }
+        } catch (error) {
+            next(error)
         }
     },
     getShowsByGenre: async (req, res) => {
-        const show = await Show.findAll({where: {genre: { [Op.like]: `%${req.params.genre}%` }}});
-        if (show.length) {
-            res.json(show);
-        } else {
-            res.status(404).json({ error: `Shows with ${req.params.genre} genre not found` });
+        try {
+            const show = await Show.findAll({ where: { genre: { [Op.like]: `%${req.params.genre}%` } } });
+            if (show.length) {
+                return res.json(show);
+            } else {
+                return res.status(404).json({ error: `Shows with ${req.params.genre} genre not found` });
+            }
+        } catch (error) {
+            next(error)
         }
     },
+    updateShowRating: async (req, res) => {
+        try {
+            const show = await Show.findByPk(req.params.id);
+            if (show) {
+                show.status = req.body.status;
+                await show.save();
+                return res.json(show);
+            } else {
+                return res.status(404).json({ error: 'Show not found' });
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    updateShowStatus: async (req, res) => {
+        try {
+            const show = await Show.findByPk(req.params.id);
+            if (show) {
+                return res.json(show);
+            } else {
+                return res.status(404).json({ error: 'Show not found' });
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    deleteShow: async (req, res) => {
+        try {
+            const show = await Show.findByPk(req.params.id);
+            if (show) {
+                let title = show.title;
+                await show.destroy();
+                return res.json(`Show ${title} deleted`);
+            } else {
+                return res.status(404).json({ error: 'Show not found' });
+            }
+        } catch (error) {
+            next(error)
+        }
+    }
+    
 }
