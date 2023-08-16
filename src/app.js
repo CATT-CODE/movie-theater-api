@@ -5,7 +5,12 @@ const showRouter = require('./routes/showRouter');
 
 app.use(express.json());
 
+
 app.use("/users", userRouter);
 app.use("/shows", showRouter);
 
-module.exports = app;
+app.use('/', (req, res) => {
+    res.send('Movie Theather API');
+});
+
+module.exports = app; 
